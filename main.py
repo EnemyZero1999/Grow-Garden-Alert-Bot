@@ -3,14 +3,15 @@ import os
 import requests
 from discord.ext import commands
 
-# Load from environment variables
-DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
-DISCORD_CHANNEL_ID = int(os.environ["DISCORD_CHANNEL_ID"])
+# Multiple channels support
+DISCORD_CHANNEL_IDS = os.environ["DISCORD_CHANNEL_IDS"].split(",")
+DISCORD_CHANNEL_IDS = [int(id.strip()) for id in DISCORD_CHANNEL_IDS]
+
 TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
-# Keywords to detect (edit this list if you want)
-KEYWORDS = ["Golden Egg", "Rainbow Seed", "Ultra Rare", "Godly Pet"]
+# List of rare item keywords (you can change or add more)
+KEYWORDS = ["Golden Egg", "Rainbow Seed", "Ultra Rare", "Godly Pet", "Meteor", "Weather Alert"]
 
 bot = commands.Bot(command_prefix="!", self_bot=True)
 
@@ -28,11 +29,11 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.channel.id == DISCORD_CHANNEL_ID:
+    if message.channel.id in DISCORD_CHANNEL_IDS:
         for keyword in KEYWORDS:
             if keyword.lower() in message.content.lower():
                 print(f"🔍 Found keyword: {keyword}")
                 send_telegram_alert(message.content)
                 break
 
-bot.run(DISCORD_TOKEN, bot=False)
+bot.run(os.environ["DISCORD_TOKEN"], bot=False)
