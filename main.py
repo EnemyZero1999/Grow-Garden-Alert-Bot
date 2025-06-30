@@ -1,19 +1,23 @@
 import asyncio
 import os
 import requests
+import discord
 from discord.ext import commands
 
-# Multiple channels support
 DISCORD_CHANNEL_IDS = os.environ["DISCORD_CHANNEL_IDS"].split(",")
 DISCORD_CHANNEL_IDS = [int(id.strip()) for id in DISCORD_CHANNEL_IDS]
 
 TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
-# List of rare item keywords (you can change or add more)
 KEYWORDS = ["Golden Egg", "Rainbow Seed", "Ultra Rare", "Godly Pet", "Meteor", "Weather Alert"]
 
-bot = commands.Bot(command_prefix="!", self_bot=True)
+# ✅ Define intents for reading messages
+intents = discord.Intents.default()
+intents.messages = True
+intents.message_content = True
+
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 def send_telegram_alert(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -29,7 +33,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.channel.id in DISCORD_CHANNEL_IDS:
+    if message.channel.id in DISCORD_CHANNEL_IDS and not message.author.bot:
         for keyword in KEYWORDS:
             if keyword.lower() in message.content.lower():
                 print(f"🔍 Found keyword: {keyword}")
