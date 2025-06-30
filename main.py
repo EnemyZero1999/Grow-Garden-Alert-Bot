@@ -36,4 +36,4 @@ async def on_message(message):
                 send_telegram_alert(message.content)
                 break
 
-bot.run(os.environ["DISCORD_TOKEN"], bot=False)
+bot.run(os.environ["DISCORD_TOKEN"])
