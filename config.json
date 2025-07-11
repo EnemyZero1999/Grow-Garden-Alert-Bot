@@ -1,0 +1,28 @@
+{
+  "webhook": "https://discordapp.com/api/webhooks/1390607631097532436/We8AWWa25yeYlVmq-IGlCAQgPEontbksgwBvf-Otf8rXNpZ8Bkrxo4B9V5Xuvp9U8jnT",
+  "Seeds": [
+    "Carrot",
+    "Sugar Apple",
+    "Pumpkin Seed",
+    "Burning Bud",
+    "Ember lily",
+    "Mushroom Seed",
+    "Strawberry"
+  ],
+  "Eggs": [
+    "Bug Egg",
+    "Mythical Egg",
+    "Paradise Egg",
+    "Rare Summer Egg",
+    "Common Summer Egg",
+    "Common Egg"
+  ],
+  "Gear": [
+    "Master Sprinkler",
+    "Godly Sprinkler",
+    "Advanced Sprinkler",
+    "Basic Sprinkler",
+    "Tanning Mirror",
+    "Trowel"
+  ]
+}

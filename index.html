@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Grow Garden Bot Config</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #f0f0f0;
+    }
+
+    h2 {
+      margin-bottom: 5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔗 Discord Webhook URL</h2>
+  <input id="webhook" placeholder="Paste your webhook URL here" />
+
+  <h2>🌱 Rare Seeds</h2>
+  <textarea id="seeds" rows="4" placeholder="Carrot, Pumpkin Seed, Mushroom Seed..."></textarea>
+
+  <h2>🥚 Rare Eggs</h2>
+  <textarea id="eggs" rows="4" placeholder="Bug Egg, Mythical Egg, Common Egg..."></textarea>
+
+  <h2>⚙️ Rare Gear</h2>
+  <textarea id="gear" rows="4" placeholder="Sprinklers, Tanning Mirror..."></textarea>
+
+  <button onclick="saveConfig()">💾 Save Config</button>
+  <button id="toggleBotBtn" onclick="toggleBot()">🚀 Start Bot</button>
+
+  <div id="status">🔴 Bot Status: <span id="botStatus">Stopped</span></div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let botRunning = false;
+
+    async function loadConfig() {
+      const config = await ipcRenderer.invoke('get-config');
+      document.getElementById('webhook').value = config.webhook || "";
+      document.getElementById('seeds').value = (config.Seeds || []).join(", ");
+      document.getElementById('eggs').value = (config.Eggs || []).join(", ");
+      document.getElementById('gear').value = (config.Gear || []).join(", ");
+    }
+
+    function saveConfig() {
+      const updated = {
+        webhook: document.getElementById('webhook').value.trim(),
+        Seeds: document.getElementById('seeds').value.split(',').map(x => x.trim()).filter(Boolean),
+        Eggs: document.getElementById('eggs').value.split(',').map(x => x.trim()).filter(Boolean),
+        Gear: document.getElementById('gear').value.split(',').map(x => x.trim()).filter(Boolean),
+      };
+      ipcRenderer.send('save-config', updated);
+      alert("✅ Config saved successfully!");
+    }
+
+    function toggleBot() {
+      if (botRunning) {
+        ipcRenderer.send('stop-bot');
+        updateBotStatus(false);
+      } else {
+        ipcRenderer.send('start-bot');
+        updateBotStatus(true);
+      }
+    }
+
+    function updateBotStatus(isRunning) {
+      botRunning = isRunning;
+      const statusText = document.getElementById('botStatus');
+      const btn = document.getElementById('toggleBotBtn');
+
+      if (isRunning) {
+        statusText.textContent = "Running";
+        statusText.style.color = "green";
+        btn.textContent = "⛔ Stop Bot";
+      } else {
+        statusText.textContent = "Stopped";
+        statusText.style.color = "red";
+        btn.textContent = "🚀 Start Bot";
+      }
+    }
+
+    // Load config when page opens
+    loadConfig();
+  </script>
+</body>
+</html>
